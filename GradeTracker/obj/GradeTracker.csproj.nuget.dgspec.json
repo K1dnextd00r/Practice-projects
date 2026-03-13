@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\tkeka\\Practice-projects\\GradeTracker\\GradeTracker.csproj": {}
+    "C:\\Users\\tkeka\\GradeTracker\\GradeTracker.csproj": {}
   },
   "projects": {
-    "C:\\Users\\tkeka\\Practice-projects\\GradeTracker\\GradeTracker.csproj": {
+    "C:\\Users\\tkeka\\GradeTracker\\GradeTracker.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\tkeka\\Practice-projects\\GradeTracker\\GradeTracker.csproj",
+        "projectUniqueName": "C:\\Users\\tkeka\\GradeTracker\\GradeTracker.csproj",
         "projectName": "GradeTracker",
-        "projectPath": "C:\\Users\\tkeka\\Practice-projects\\GradeTracker\\GradeTracker.csproj",
+        "projectPath": "C:\\Users\\tkeka\\GradeTracker\\GradeTracker.csproj",
         "packagesPath": "C:\\Users\\tkeka\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\tkeka\\Practice-projects\\GradeTracker\\obj\\",
+        "outputPath": "C:\\Users\\tkeka\\GradeTracker\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
