@@ -10,7 +10,9 @@ using HabitTracker.Models;
 
 namespace HabitTracker.Controllers
 {
-    public class HabitsController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class HabitsController : ControllerBase
     {
         private readonly AppDbContext _context;
 
@@ -19,30 +21,26 @@ namespace HabitTracker.Controllers
             _context = context;
         }
 
-        // GET: Habits
-        public async Task<IActionResult> Index()
+        // GET api/habit
+        public async Task<IActionResult> GetAll()
         {
-            var appDbContext = _context.Habits.Include(h => h.User);
-            return View(await appDbContext.ToListAsync());
+            var habits = await _context.Habits
+                .Where(h => !h.isArchived)
+                .ToListAsync();
+
+            return Ok(habits);
         }
 
-        // GET: Habits/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: api/habit/{Id}
+        public async Task<IActionResult> GetById(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var habit = await _context.Habits
-                .Include(h => h.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var habit = await _context.Habits.FindAsync(id);
             if (habit == null)
             {
-                return NotFound();
+                return NotFound(new { message = $"Habit with Id {id} not found." });
             }
 
-            return View(habit);
+            return Ok(habit);
         }
 
         // GET: Habits/Create
