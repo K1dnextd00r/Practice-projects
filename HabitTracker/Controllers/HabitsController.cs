@@ -1,12 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Elfie.Serialization;
+using HabitTracker.Data;
+using HabitTracker.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using HabitTracker.Data;
-using HabitTracker.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+/*
+Before writing any endpoint, answer these:
+
+[ ] What HTTP method? (GET / POST / PUT / DELETE)
+[ ] What is the route ? (/ api / resource or / api / resource /{ id})
+[ ] Where is my data coming from? (URL / query string / body)
+[ ] What can go wrong? (404 / 400 / 401)
+[ ] What do I return on success ? (200 / 201 / 204)
+*/
 
 namespace HabitTracker.Controllers
 {
@@ -77,21 +88,17 @@ namespace HabitTracker.Controllers
 
         }
 
-        // GET: Habits/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // DELETE: /api/habit/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var habit = await _context.Habits.FindAsync(id);
             if (habit == null)
-            {
-                return NotFound();
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", habit.UserId);
-            return View(habit);
+                return NotFound(new { message = $"Habit with ID {id} not found" });
+
+            habit.isArchived = true;
+            await _context.SaveChangesAsync();
+            return NoContent();
         }
 
         // POST: Habits/Edit/5
