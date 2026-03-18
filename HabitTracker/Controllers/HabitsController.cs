@@ -22,6 +22,7 @@ namespace HabitTracker.Controllers
         }
 
         // GET api/habit
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var habits = await _context.Habits
@@ -32,6 +33,7 @@ namespace HabitTracker.Controllers
         }
 
         // GET: api/habit/{Id}
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var habit = await _context.Habits.FindAsync(id);
@@ -43,28 +45,36 @@ namespace HabitTracker.Controllers
             return Ok(habit);
         }
 
-        // GET: Habits/Create
-        public IActionResult Create()
+        // POST /api/habit
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] Habit habit)
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
-            return View();
+            if(string.IsNullOrEmpty(habit.Name))
+                return BadRequest(new {message = "Habit name is required"});
+
+            habit.CreatedAt = DateTime.Now;
+            habit.isArchived = false;
+            _context.Habits.Add(habit);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetById), new { id = habit.Id }, habit);
         }
 
-        // POST: Habits/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,Name,Description,Frequency,CreatedAt,isArchived")] Habit habit)
+        // PUT /api/habits/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] Habit updated)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(habit);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", habit.UserId);
-            return View(habit);
+            var habit = await _context.Habits.FindAsync();
+
+            if (habit == null)
+                return NotFound(new { message = $"Habit with ID {id} not found" });
+
+            habit.Name = updated.Name;
+            habit.Description = updated.Description;
+            habit.Frequency = updated.Frequency;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+
         }
 
         // GET: Habits/Edit/5
