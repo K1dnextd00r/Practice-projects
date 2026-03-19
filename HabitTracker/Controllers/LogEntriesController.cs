@@ -4,6 +4,16 @@ using HabitTracker.Data;
 using HabitTracker.Models;
 using Microsoft.AspNetCore.Mvc;
 
+/*
+Before writing any endpoint, answer these:
+
+[ ] What HTTP method? (GET / POST / PUT / DELETE)
+[ ] What is the route ? (/ api / resource or / api / resource /{ id})
+[ ] Where is my data coming from? (URL / query string / body)
+[ ] What can go wrong? (404 / 400 / 401)
+[ ] What do I return on success ? (200 / 201 / 204)
+*/
+
 namespace HabitTracker.Controllers
 {
     [ApiController]
@@ -56,6 +66,19 @@ namespace HabitTracker.Controllers
             _context.LogEntries.Add(logEntry);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetAllLogs), new { id }, logEntry);
+        }
+
+        //DELETE /api/logs/{id}
+        [HttpDelete("/api/logs/{id}")]
+        public async Task<IActionResult> DeleteLog(int id)
+        {
+            var logEntry = await _context.LogEntries.FindAsync(id);
+            if (logEntry == null)
+                return NotFound(new { message = "Habit with id {id} not found" });
+
+            _context.LogEntries.Remove(logEntry);
+            await _context.SaveChangesAsync();
+            return NoContent();
         }
     }
 }
