@@ -32,13 +32,22 @@ namespace HabitTracker.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] User user)
         {
-            if (string.IsNullOrEmpty(user.Username))
-                return BadRequest(new { message = "User must have a name and email must be provided" });
+            if (string.IsNullOrEmpty(user.Username) ||
+                string.IsNullOrEmpty(user.Email) ||
+                string.IsNullOrEmpty(user.PasswordHash))
+                return BadRequest(new { message = "Username, email and Password are all required to be entered" });
 
+            var emailTaken = await _context.Users.AnyAsync(u => u.Email == user.Email);
+            if (emailTaken)
+                return BadRequest(new { message = "An account with this email already exists" });
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
             user.CreatedAt = DateTime.Now;
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(Login), new { Id = user.Id }, user);
+
+            user.PasswordHash = null;
+            return CreatedAtAction(nameof(Login), new { id = user.Id }, user);
         }
     }
 }
